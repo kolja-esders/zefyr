@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notus/notus.dart';
 
@@ -112,12 +113,15 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
       child: body,
     );
 
+    bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    final controls = isAndroid ? materialTextSelectionControls : cupertinoTextSelectionControls;
+
     final overlay = Overlay.of(context, debugRequiredFor: widget);
     final layers = <Widget>[scrollable];
     if (widget.enabled) {
       layers.add(ZefyrSelectionOverlay(
         controller: widget.controller,
-        controls: cupertinoTextSelectionControls,
+        controls: controls,
         overlay: overlay,
       ));
     }
