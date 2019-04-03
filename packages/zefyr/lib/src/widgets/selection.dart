@@ -273,9 +273,9 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       extentOffset: word.end,
     );
 
-    // Provide haptic feedback for a selection.
-    if(await Vibrate.canVibrate) {
-      Vibrate.feedback(FeedbackType.selection);
+    // Provide haptic feedback for a non-empty selection.
+    if (word.start < word.end && await Vibrate.canVibrate) {
+      Vibrate.feedback(FeedbackType.medium);
     }
 
     widget.controller.updateSelection(selection, source: ChangeSource.local);
