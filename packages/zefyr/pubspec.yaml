@@ -21,6 +21,7 @@ dependencies:
       ref: flutter-master
       path: packages/notus
   meta: ^1.1.0
+  vibrate: ^0.0.4
 
 dev_dependencies:
   flutter_test:

@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:notus/notus.dart';
+import 'package:vibrate/vibrate.dart';
 import 'package:zefyr/util.dart';
 
 import 'controller.dart';
@@ -255,7 +256,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
     widget.controller.updateSelection(selection, source: ChangeSource.local);
   }
 
-  void _handleLongPress() {
+  void _handleLongPress() async {
     final Offset globalPoint = _longPressPosition;
     _longPressPosition = null;
     HitTestResult result = new HitTestResult();
@@ -271,6 +272,12 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       baseOffset: word.start,
       extentOffset: word.end,
     );
+
+    // Provide haptic feedback for a selection.
+    if(await Vibrate.canVibrate) {
+      Vibrate.feedback(FeedbackType.selection);
+    }
+
     widget.controller.updateSelection(selection, source: ChangeSource.local);
   }
 }
