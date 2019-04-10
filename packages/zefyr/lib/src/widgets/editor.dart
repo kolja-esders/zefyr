@@ -23,6 +23,7 @@ class ZefyrEditor extends StatefulWidget {
     this.toolbarDelegate,
     this.imageDelegate,
     this.physics,
+    this.placeholder,
   }) : super(key: key);
 
   final ZefyrController controller;
@@ -32,6 +33,7 @@ class ZefyrEditor extends StatefulWidget {
   final ZefyrToolbarDelegate toolbarDelegate;
   final ZefyrImageDelegate imageDelegate;
   final ScrollPhysics physics;
+  final String placeholder;
 
   /// Padding around editable area.
   final EdgeInsets padding;
@@ -151,6 +153,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
       enabled: widget.enabled,
       padding: widget.padding,
       physics: widget.physics,
+      placeholder: widget.placeholder,
     );
 
     return ZefyrTheme(
