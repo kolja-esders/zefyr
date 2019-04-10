@@ -38,6 +38,7 @@ class ZefyrEditableText extends StatefulWidget {
     this.enabled: true,
     this.padding: const EdgeInsets.symmetric(horizontal: 16.0),
     this.physics,
+    this.placeholder,
   }) : super(key: key);
 
   final ZefyrController controller;
@@ -46,6 +47,7 @@ class ZefyrEditableText extends StatefulWidget {
   final bool autofocus;
   final bool enabled;
   final ScrollPhysics physics;
+  final String placeholder;
 
   /// Padding around editable area.
   final EdgeInsets padding;
@@ -54,8 +56,7 @@ class ZefyrEditableText extends StatefulWidget {
   _ZefyrEditableTextState createState() => new _ZefyrEditableTextState();
 }
 
-class _ZefyrEditableTextState extends State<ZefyrEditableText>
-    with AutomaticKeepAliveClientMixin {
+class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKeepAliveClientMixin {
   //
   // New public members
   //
@@ -119,6 +120,20 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
     final overlay = Overlay.of(context, debugRequiredFor: widget);
     final layers = <Widget>[scrollable];
     if (widget.enabled) {
+      if (widget.placeholder != null && document.length == 0) {
+        final line = LineNode()..insert(0, widget.placeholder, null);
+        // Make sure the line node has a parent node.
+        final root = RootNode()..add(line);
+        layers.add(
+          Padding(
+            padding: widget.padding,
+            child: ZefyrParagraph(
+              node: line,
+              blockStyle: TextStyle(color: Theme.of(context).hintColor),
+            ),
+          ),
+        );
+      }
       layers.add(ZefyrSelectionOverlay(
         controller: widget.controller,
         controls: controls,
@@ -245,8 +260,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
 
   // Triggered for both text and selection changes.
   void _handleLocalValueChange() {
-    if (widget.enabled &&
-        widget.controller.lastChangeSource == ChangeSource.local) {
+    if (widget.enabled && widget.controller.lastChangeSource == ChangeSource.local) {
       // Only request keyboard for user actions.
       requestKeyboard();
     }
@@ -258,16 +272,13 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
   }
 
   void _handleFocusChange() {
-    _input.openOrCloseConnection(
-        focusNode, widget.controller.plainTextEditingValue);
+    _input.openOrCloseConnection(focusNode, widget.controller.plainTextEditingValue);
     _cursorTimer.startOrStop(focusNode, selection);
     updateKeepAlive();
   }
 
-  void _handleRemoteValueChange(
-      int start, String deleted, String inserted, TextSelection selection) {
-    widget.controller
-        .replaceText(start, deleted.length, inserted, selection: selection);
+  void _handleRemoteValueChange(int start, String deleted, String inserted, TextSelection selection) {
+    widget.controller.replaceText(start, deleted.length, inserted, selection: selection);
   }
 
   void _handleRenderContextChange() {
