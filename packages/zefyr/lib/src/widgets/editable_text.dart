@@ -120,7 +120,8 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     final overlay = Overlay.of(context, debugRequiredFor: widget);
     final layers = <Widget>[scrollable];
     if (widget.enabled) {
-      if (widget.placeholder != null && document.length == 0) {
+      // The document will always have a newline at the end, so the minimum length to check against is 1.
+      if (widget.placeholder != null && document.length <= 1) {
         final line = LineNode()..insert(0, widget.placeholder, null);
         // Make sure the line node has a parent node.
         final root = RootNode()..add(line);
