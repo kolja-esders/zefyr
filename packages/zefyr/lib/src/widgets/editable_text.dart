@@ -121,7 +121,18 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     final layers = <Widget>[scrollable];
     if (widget.enabled) {
       // The document will always have a newline at the end, so the minimum length to check against is 1.
-      if (widget.placeholder != null && document.length <= 1) {
+      if (_shouldShowPlaceholder()) {
+        /*
+        final theme = ZefyrTheme.of(context);
+        TextStyle style = theme.paragraphTheme.textStyle.merge(TextStyle(color: Theme.of(context).hintColor, height: 1.25, fontSize: 20));
+        layers.add(
+          Padding(
+              padding: widget.padding,
+                child: Text(widget.placeholder, style: style),
+          ),
+        );
+        */
+
         final line = LineNode()..insert(0, widget.placeholder, null);
         // Make sure the line node has a parent node.
         final root = RootNode()..add(line);
@@ -143,6 +154,10 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     }
 
     return Stack(fit: StackFit.expand, children: layers);
+  }
+
+  bool _shouldShowPlaceholder() {
+    return widget.placeholder != null && document.length <= 1 && document.collectStyle(0, 1).isEmpty;
   }
 
   @override
