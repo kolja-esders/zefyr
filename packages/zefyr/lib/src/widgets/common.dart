@@ -90,6 +90,8 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
   }
 
   void bringIntoView(BuildContext context) {
+    if (!mounted) return;
+
     ScrollableState scrollable = Scrollable.of(context);
     final object = context.findRenderObject();
     assert(object.attached);
