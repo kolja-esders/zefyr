@@ -57,12 +57,6 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
     _scaffold.showToolbar(buildToolbar);
   }
 
-  void hideToolbar() {
-    if (_toolbarKey == null) return;
-    _scaffold.hideToolbar();
-    _toolbarKey = null;
-  }
-
   Widget buildToolbar(BuildContext context) {
     return ZefyrTheme(
       data: _themeData,
@@ -75,9 +69,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
   }
 
   void _handleChange() {
-    if (_scope.focusOwner == FocusOwner.none) {
-      hideToolbar();
-    } else if (!hasToolbar) {
+    if (!hasToolbar) {
       showToolbar();
     } else {
       // TODO: is there a nicer way to do this?
@@ -129,7 +121,6 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
     final scaffold = ZefyrScaffold.of(context);
     if (_scaffold != scaffold) {
       bool didHaveToolbar = hasToolbar;
-      hideToolbar();
       _scaffold = scaffold;
       if (didHaveToolbar) showToolbar();
     }
@@ -137,7 +128,6 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
 
   @override
   void dispose() {
-    hideToolbar();
     _scope.removeListener(_handleChange);
     _scope.dispose();
     super.dispose();
