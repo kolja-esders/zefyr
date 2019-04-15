@@ -69,9 +69,10 @@ class ZefyrButton extends StatelessWidget {
     final editor = toolbar.editor;
     final toolbarTheme = ZefyrTheme.of(context).toolbarTheme;
     final pressedHandler = _getPressedHandler(editor, toolbar);
+    final activeIconColor = _getIconColor(editor, toolbarTheme);
     final iconColor = (pressedHandler == null)
         ? toolbarTheme.disabledIconColor
-        : toolbarTheme.iconColor;
+        : activeIconColor;
     if (_icon != null) {
       return RawZefyrButton.icon(
         action: action,
@@ -92,6 +93,17 @@ class ZefyrButton extends StatelessWidget {
         onPressed: _getPressedHandler(editor, toolbar),
       );
     }
+  }
+
+  Color _getIconColor(ZefyrScope editor, ZefyrToolbarTheme theme) {
+    if (isAttributeAction) {
+      final attribute = kZefyrToolbarAttributeActions[action];
+      final isToggled = (attribute is NotusAttribute)
+          ? editor.selectionStyle.containsSame(attribute)
+          : editor.selectionStyle.contains(attribute);
+      return isToggled ? theme.activeIconColor : theme.iconColor;
+    }
+    return null;
   }
 
   Color _getColor(ZefyrScope editor, ZefyrToolbarTheme theme) {

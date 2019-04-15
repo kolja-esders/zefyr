@@ -61,6 +61,7 @@ class ZefyrThemeData {
   final BlockTheme blockTheme;
   final Color selectionColor;
   final Color cursorColor;
+  final Color codeBackgroundColor;
 
   /// Size of indentation for blocks.
   final double indentSize;
@@ -92,6 +93,7 @@ class ZefyrThemeData {
       cursorColor: Colors.black,
       indentSize: 16.0,
       toolbarTheme: new ZefyrToolbarTheme.fallback(context),
+      codeBackgroundColor: Colors.blueGrey.shade50,
     );
   }
 
@@ -106,6 +108,7 @@ class ZefyrThemeData {
     this.cursorColor,
     this.indentSize,
     this.toolbarTheme,
+    this.codeBackgroundColor,
   });
 
   ZefyrThemeData copyWith({
@@ -120,6 +123,7 @@ class ZefyrThemeData {
     Color cursorColor,
     double indentSize,
     ZefyrToolbarTheme toolbarTheme,
+    Color codeBackgroundColor,
   }) {
     return new ZefyrThemeData(
       boldStyle: boldStyle ?? this.boldStyle,
@@ -132,6 +136,7 @@ class ZefyrThemeData {
       cursorColor: cursorColor ?? this.cursorColor,
       indentSize: indentSize ?? this.indentSize,
       toolbarTheme: toolbarTheme ?? this.toolbarTheme,
+      codeBackgroundColor: codeBackgroundColor ?? this.codeBackgroundColor,
     );
   }
 
@@ -147,6 +152,7 @@ class ZefyrThemeData {
       cursorColor: other.cursorColor,
       indentSize: other.indentSize,
       toolbarTheme: other.toolbarTheme,
+      codeBackgroundColor: other.codeBackgroundColor,
     );
   }
 }
@@ -278,6 +284,9 @@ class ZefyrToolbarTheme {
   /// Color of button icons in disabled state.
   final Color disabledIconColor;
 
+  /// Color of button icons when active/toggled.
+  final Color activeIconColor;
+
   /// Creates fallback theme for editor toolbars.
   factory ZefyrToolbarTheme.fallback(BuildContext context) {
     final theme = Theme.of(context);
@@ -286,6 +295,7 @@ class ZefyrToolbarTheme {
       toggleColor: theme.primaryColor,
       iconColor: theme.primaryIconTheme.color,
       disabledIconColor: theme.primaryColor,
+      activeIconColor: theme.primaryIconTheme.color,
     );
   }
 
@@ -294,6 +304,7 @@ class ZefyrToolbarTheme {
     @required this.toggleColor,
     @required this.iconColor,
     @required this.disabledIconColor,
+    @required this.activeIconColor,
   });
 
   ZefyrToolbarTheme copyWith({
@@ -301,12 +312,14 @@ class ZefyrToolbarTheme {
     Color toggleColor,
     Color iconColor,
     Color disabledIconColor,
+    Color activeIconColor,
   }) {
     return ZefyrToolbarTheme._(
       color: color ?? this.color,
       toggleColor: toggleColor ?? this.toggleColor,
       iconColor: iconColor ?? this.iconColor,
       disabledIconColor: disabledIconColor ?? this.disabledIconColor,
+      activeIconColor: activeIconColor ?? this.activeIconColor,
     );
   }
 }
