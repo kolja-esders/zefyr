@@ -122,27 +122,13 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     if (widget.enabled) {
       // The document will always have a newline at the end, so the minimum length to check against is 1.
       if (_shouldShowPlaceholder()) {
-        /*
         final theme = ZefyrTheme.of(context);
-        TextStyle style = theme.paragraphTheme.textStyle.merge(TextStyle(color: Theme.of(context).hintColor, height: 1.25, fontSize: 20));
-        layers.add(
-          Padding(
-              padding: widget.padding,
-                child: Text(widget.placeholder, style: style),
-          ),
-        );
-        */
-
-        final line = LineNode()..insert(0, widget.placeholder, null);
-        // Make sure the line node has a parent node.
-        final root = RootNode()..add(line);
+        TextStyle style = theme.paragraphTheme.textStyle
+            .merge(TextStyle(color: Theme.of(context).hintColor, height: 1.25, fontSize: 20));
         layers.add(
           Padding(
             padding: widget.padding,
-            child: ZefyrParagraph(
-              node: line,
-              blockStyle: TextStyle(color: Theme.of(context).hintColor),
-            ),
+            child: Text(widget.placeholder, style: style),
           ),
         );
       }
