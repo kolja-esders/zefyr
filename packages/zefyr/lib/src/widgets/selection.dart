@@ -5,8 +5,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:notus/notus.dart';
-import 'package:vibrate/vibrate.dart';
 import 'package:zefyr/util.dart';
 
 import 'controller.dart';
@@ -274,9 +274,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
     );
 
     // Provide haptic feedback for a non-empty selection.
-    if (word.start < word.end && await Vibrate.canVibrate) {
-      Vibrate.feedback(FeedbackType.medium);
-    }
+    if (word.start < word.end) HapticFeedback.selectionClick();
 
     widget.controller.updateSelection(selection, source: ChangeSource.local);
   }
