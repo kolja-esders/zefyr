@@ -143,7 +143,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   }
 
   bool _shouldShowPlaceholder() {
-    return widget.placeholder != null && document.length <= 1 && document.collectStyle(0, 1).isEmpty;
+    return widget.placeholder != null && (document.length == 0 || document.length == 1 && document.collectStyle(0, 1).isEmpty);
   }
 
   @override
