@@ -88,7 +88,7 @@ class NotusAttribute<T> implements NotusAttributeBuilder<T> {
   static const italic = const _ItalicAttribute();
 
   /// Link style attribute.
-  static const link = const LinkAttributeBuilder._();
+  static const link = LinkAttributeBuilder._();
 
   // Line attributes
 

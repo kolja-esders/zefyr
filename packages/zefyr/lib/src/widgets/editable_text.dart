@@ -60,6 +60,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   //
   // New public members
   //
+  FocusAttachment _focusAttachment;
 
   /// Document controlled by this widget.
   NotusDocument get document => widget.controller.document;
@@ -68,7 +69,6 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   TextSelection get selection => widget.controller.selection;
 
   FocusNode _focusNode;
-  FocusAttachment _focusAttachment;
 
   /// Express interest in interacting with the keyboard.
   ///
@@ -152,6 +152,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     super.initState();
     _focusAttachment = _focusNode.attach(context);
     _input = new InputConnectionController(_handleRemoteValueChange);
+    _focusAttachment = widget.focusNode.attach(context);
     _updateSubscriptions();
   }
 
@@ -165,6 +166,11 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     }
     _updateSubscriptions(oldWidget);
     focusOrUnfocusIfNeeded();
+    if (widget.focusNode != oldWidget.focusNode) {
+      _focusAttachment?.detach();
+      _focusAttachment = widget.focusNode.attach(context);
+      updateKeepAlive();
+    }
   }
 
   @override
@@ -188,6 +194,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   void dispose() {
     _focusAttachment.detach();
     _cancelSubscriptions();
+    _focusAttachment.detach();
     super.dispose();
   }
 
