@@ -349,7 +349,8 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
     assert(boxes.isNotEmpty, 'Got empty boxes for selection ${selection}');
 
     final box = isBaseHandle ? boxes.first : boxes.last;
-    final dx = isBaseHandle ? box.start : box.end;
+    // Quickfix: Move left handle 22 pixels to the left in order to put iti to the right position.
+    final dx = isBaseHandle ? box.start - 22 : box.end;
     return new Offset(dx, box.bottom);
   }
 
