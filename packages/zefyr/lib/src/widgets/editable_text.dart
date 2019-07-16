@@ -10,6 +10,7 @@ import 'code.dart';
 import 'common.dart';
 import 'controller.dart';
 import 'cursor_timer.dart';
+import 'custom_text_selection.dart';
 import 'editor.dart';
 import 'image.dart';
 import 'input.dart';
@@ -115,7 +116,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     );
 
     bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
-    final controls = isAndroid ? materialTextSelectionControls : cupertinoTextSelectionControls;
+    final controls = isAndroid ? customTextSelectionControls : cupertinoTextSelectionControls;
 
     final overlay = Overlay.of(context, debugRequiredFor: widget);
     final layers = <Widget>[scrollable];
@@ -132,6 +133,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
           ),
         );
       }
+
       layers.add(ZefyrSelectionOverlay(
         controller: widget.controller,
         controls: controls,

@@ -301,7 +301,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
   bool get pasteEnabled => true;
 
   @override
-  bool get selectAllEnabled => true;
+  bool get selectAllEnabled => false;
 }
 
 enum _SelectionHandlePosition { base, extent }
