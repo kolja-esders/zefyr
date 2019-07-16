@@ -36,24 +36,19 @@ class ZefyrSelectionOverlay extends StatefulWidget {
   final OverlayState overlay;
 
   @override
-  _ZefyrSelectionOverlayState createState() =>
-      new _ZefyrSelectionOverlayState();
+  _ZefyrSelectionOverlayState createState() => new _ZefyrSelectionOverlayState();
 }
 
-class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
-    implements TextSelectionDelegate {
+class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay> implements TextSelectionDelegate {
   @override
-  TextEditingValue get textEditingValue =>
-      widget.controller.plainTextEditingValue;
+  TextEditingValue get textEditingValue => widget.controller.plainTextEditingValue;
 
   set textEditingValue(TextEditingValue value) {
     final cursorPosition = value.selection.extentOffset;
     final oldText = widget.controller.document.toPlainText();
     final newText = value.text;
     final diff = fastDiff(oldText, newText, cursorPosition);
-    widget.controller.replaceText(
-        diff.start, diff.deleted.length, diff.inserted,
-        selection: value.selection);
+    widget.controller.replaceText(diff.start, diff.deleted.length, diff.inserted, selection: value.selection);
   }
 
   @override
@@ -62,6 +57,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
   }
 
   bool get isToolbarVisible => _toolbar != null;
+
   bool get isToolbarHidden => _toolbar == null;
 
   @override
@@ -79,10 +75,8 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
         ? _lastTapDownPosition
         : _longPressPosition != null
             ? _longPressPosition
-            : Offset(_editor.selection.baseOffset.toDouble(),
-                _editor.selection.extentOffset.toDouble());
-    RenderEditableProxyBox renderObject = _editor?.renderContext
-        ?.boxForTextOffset(_editor?.selection?.baseOffset);
+            : Offset(_editor.selection.baseOffset.toDouble(), _editor.selection.extentOffset.toDouble());
+    RenderEditableProxyBox renderObject = _editor?.renderContext?.boxForTextOffset(_editor?.selection?.baseOffset);
     _toolbar = new OverlayEntry(
       builder: (context) => new FadeTransition(
         opacity: toolbarOpacity,
@@ -106,8 +100,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
   @override
   void initState() {
     super.initState();
-    _toolbarController = new AnimationController(
-        duration: _kFadeDuration, vsync: widget.overlay);
+    _toolbarController = new AnimationController(duration: _kFadeDuration, vsync: widget.overlay);
   }
 
   static const Duration _kFadeDuration = const Duration(milliseconds: 150);
@@ -118,8 +111,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
     if (oldWidget.overlay != widget.overlay) {
       hideToolbar();
       _toolbarController.dispose();
-      _toolbarController = new AnimationController(
-          duration: _kFadeDuration, vsync: widget.overlay);
+      _toolbarController = new AnimationController(duration: _kFadeDuration, vsync: widget.overlay);
     }
   }
 
@@ -264,6 +256,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       if (isToolbarVisible) {
         hideToolbar();
       } else {
+        HapticFeedback.selectionClick();
         showToolbar();
       }
       return;
@@ -276,10 +269,11 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       extentOffset: word.end,
     );
 
-    if(word.start == word.end) {
+    if (word.start == word.end) {
       if (isToolbarVisible) {
         hideToolbar();
       } else {
+        HapticFeedback.selectionClick();
         showToolbar();
       }
     }
@@ -317,8 +311,7 @@ class SelectionHandleDriver extends StatefulWidget {
   final TextSelectionControls controls;
 
   @override
-  _SelectionHandleDriverState createState() =>
-      new _SelectionHandleDriverState();
+  _SelectionHandleDriverState createState() => new _SelectionHandleDriverState();
 }
 
 class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
@@ -335,8 +328,7 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
   ///
   /// For base handle this equals to [TextSelection.baseOffset] and for
   /// extent handle - [TextSelection.extentOffset].
-  int get documentOffset =>
-      isBaseHandle ? selection.baseOffset : selection.extentOffset;
+  int get documentOffset => isBaseHandle ? selection.baseOffset : selection.extentOffset;
 
   /// Position in pixels of this selection handle within its paragraph [block].
   Offset getPosition(RenderEditableBox block) {
@@ -390,9 +382,7 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
     if (position == null) {
       handle = new Container();
     } else {
-      final handleType = isBaseHandle
-          ? TextSelectionHandleType.left
-          : TextSelectionHandleType.right;
+      final handleType = isBaseHandle ? TextSelectionHandleType.left : TextSelectionHandleType.right;
       handle = new Positioned(
         left: position.dx,
         top: position.dy,
@@ -486,6 +476,7 @@ class _SelectionToolbar extends StatefulWidget {
 
 class _SelectionToolbarState extends State<_SelectionToolbar> {
   ZefyrScope get editable => widget.scope;
+
   TextSelection get selection => widget.delegate.textEditingValue.selection;
 
   @override
@@ -503,20 +494,16 @@ class _SelectionToolbarState extends State<_SelectionToolbar> {
     final boxes = block.getEndpointsForSelection(selection);
     // Find the horizontal midpoint, just above the selected text.
     Offset midpoint = new Offset(
-      (boxes.length == 1)
-          ? (boxes[0].start + boxes[0].end) / 2.0
-          : (boxes[0].start + boxes[1].start) / 2.0,
+      (boxes.length == 1) ? (boxes[0].start + boxes[0].end) / 2.0 : (boxes[0].start + boxes[1].start) / 2.0,
       boxes[0].bottom - block.preferredLineHeight,
     );
     List<TextSelectionPoint> endpoints;
     if (boxes.length == 1) {
-      midpoint = Offset((boxes[0].start + boxes[0].end) / 2.0,
-          boxes[0].bottom - block.preferredLineHeight);
+      midpoint = Offset((boxes[0].start + boxes[0].end) / 2.0, boxes[0].bottom - block.preferredLineHeight);
       final Offset start = Offset(boxes[0].start, block.preferredLineHeight);
       endpoints = <TextSelectionPoint>[TextSelectionPoint(start, null)];
     } else {
-      midpoint = Offset((boxes[0].start + boxes[1].start) / 2.0,
-          boxes[0].bottom - block.preferredLineHeight);
+      midpoint = Offset((boxes[0].start + boxes[1].start) / 2.0, boxes[0].bottom - block.preferredLineHeight);
       final Offset start = Offset(boxes.first.start, boxes.first.bottom);
       final Offset end = Offset(boxes.last.end, boxes.last.bottom);
       endpoints = <TextSelectionPoint>[
@@ -530,12 +517,7 @@ class _SelectionToolbarState extends State<_SelectionToolbar> {
       block.localToGlobal(block.size.bottomRight(Offset.zero)),
     );
     final toolbar = widget.controls.buildToolbar(
-        context,
-        editingRegion,
-        widget.renderObject.preferredLineHeight,
-        midpoint,
-        endpoints,
-        widget.delegate);
+        context, editingRegion, widget.renderObject.preferredLineHeight, midpoint, endpoints, widget.delegate);
     return new CompositedTransformFollower(
       link: block.layerLink,
       showWhenUnlinked: false,
