@@ -66,7 +66,6 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
 
   @override
   void hideToolbar() {
-    _didCaretTap = false; // reset double tap.
     _toolbar?.remove();
     _toolbar = null;
     _toolbarController.stop();
@@ -188,8 +187,6 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
   TextSelection _selection;
   FocusOwner _focusOwner;
 
-  bool _didCaretTap = false;
-
   void _handleChange() {
     if (_selection != _editor.selection || _focusOwner != _editor.focusOwner) {
       _updateToolbar();
@@ -255,16 +252,6 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       offset: position.offset,
       affinity: position.affinity,
     );
-    if (_didCaretTap && _selection == selection) {
-      _didCaretTap = false;
-      if (isToolbarVisible) {
-        hideToolbar();
-      } else {
-        showToolbar();
-      }
-    } else {
-      _didCaretTap = true;
-    }
     widget.controller.updateSelection(selection, source: ChangeSource.local);
   }
 
@@ -274,6 +261,11 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
     WidgetsBinding.instance.hitTest(result, globalPoint);
     final box = _getEditableBox(result);
     if (box == null) {
+      if (isToolbarVisible) {
+        hideToolbar();
+      } else {
+        showToolbar();
+      }
       return;
     }
     final localPoint = box.globalToLocal(globalPoint);
@@ -283,6 +275,14 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       baseOffset: word.start,
       extentOffset: word.end,
     );
+
+    if(word.start == word.end) {
+      if (isToolbarVisible) {
+        hideToolbar();
+      } else {
+        showToolbar();
+      }
+    }
 
     // Provide haptic feedback for a non-empty selection.
     if (word.start < word.end) HapticFeedback.selectionClick();
@@ -349,7 +349,7 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
     assert(boxes.isNotEmpty, 'Got empty boxes for selection ${selection}');
 
     final box = isBaseHandle ? boxes.first : boxes.last;
-    // Quickfix: Move left handle 22 pixels to the left in order to put iti to the right position.
+    // Quickfix: Move left handle 22 pixels to the left in order to put it to the right position.
     final dx = isBaseHandle ? box.start - 22 : box.end;
     return new Offset(dx, box.bottom);
   }
