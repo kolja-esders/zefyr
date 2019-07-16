@@ -9,7 +9,7 @@ const double _kHandleSize = 22.0;
 // Minimal padding from all edges of the selection toolbar to all edges of the
 // viewport.
 const double _kToolbarScreenPadding = 8.0;
-const double _kToolbarHeight = 44.0;
+const double _kToolbarHeight = 48.0;
 
 /// Manages a copy/paste text selection toolbar.
 class _TextSelectionToolbar extends StatelessWidget {
@@ -32,24 +32,54 @@ class _TextSelectionToolbar extends StatelessWidget {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
 
     if (handleCut != null)
-      items.add(FlatButton(child: Text(localizations.cutButtonLabel), onPressed: handleCut));
+      items.add(
+        FlatButton(
+          child: Text('Cut', style: TextStyle(fontWeight: FontWeight.w500)),
+          onPressed: handleCut,
+        ),
+      );
     if (handleCopy != null)
-      items.add(FlatButton(child: Text(localizations.copyButtonLabel), onPressed: handleCopy));
+      items.add(
+        FlatButton(
+          child: Text('Copy', style: TextStyle(fontWeight: FontWeight.w500)),
+          onPressed: handleCopy,
+        ),
+      );
     if (handlePaste != null)
-      items.add(FlatButton(child: Text(localizations.pasteButtonLabel), onPressed: handlePaste,));
+      items.add(
+        FlatButton(
+          child: Text('Paste', style: TextStyle(fontWeight: FontWeight.w500)),
+          onPressed: handlePaste,
+        ),
+      );
     if (handleSelectAll != null)
-      items.add(FlatButton(child: Text(localizations.selectAllButtonLabel), onPressed: handleSelectAll));
+      items.add(
+        FlatButton(
+          child: Text('Select all', style: TextStyle(fontWeight: FontWeight.w500)),
+          onPressed: handleSelectAll,
+        ),
+      );
 
     // If there is no option available, build an empty widget.
     if (items.isEmpty) {
       return Container(width: 0.0, height: 0.0);
     }
 
-    return Material(
-      elevation: 1.0,
-      child: Container(
+    return Theme(
+      data: ThemeData.dark(),
+      child: ButtonTheme(
+        minWidth: 0,
         height: _kToolbarHeight,
-        child: Row(mainAxisSize: MainAxisSize.min, children: items),
+        child: Material(
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.circular(8),
+          elevation: 1.0,
+          color: Colors.grey.shade800,
+          child: Container(
+            height: _kToolbarHeight,
+            child: Row(mainAxisSize: MainAxisSize.min, children: items),
+          ),
+        ),
       ),
     );
   }
@@ -104,14 +134,14 @@ class _TextSelectionToolbarLayout extends SingleChildLayoutDelegate {
 
 /// Draws a single text selection handle which points up and to the left.
 class _TextSelectionHandlePainter extends CustomPainter {
-  _TextSelectionHandlePainter({ this.color });
+  _TextSelectionHandlePainter({this.color});
 
   final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()..color = color;
-    final double radius = size.width/2.0;
+    final double radius = size.width / 2.0;
     canvas.drawCircle(Offset(radius, radius), radius, paint);
     canvas.drawRect(Rect.fromLTWH(0.0, 0.0, radius, radius), paint);
   }
@@ -130,27 +160,25 @@ class _CustomTextSelectionControls extends TextSelectionControls {
   /// Builder for material-style copy/paste text selection toolbar.
   @override
   Widget buildToolbar(
-      BuildContext context,
-      Rect globalEditableRegion,
-      double textLineHeight,
-      Offset position,
-      List<TextSelectionPoint> endpoints,
-      TextSelectionDelegate delegate,
-      ) {
+    BuildContext context,
+    Rect globalEditableRegion,
+    double textLineHeight,
+    Offset position,
+    List<TextSelectionPoint> endpoints,
+    TextSelectionDelegate delegate,
+  ) {
     assert(debugCheckHasMediaQuery(context));
     assert(debugCheckHasMaterialLocalizations(context));
 
     // The toolbar should appear below the TextField
     // when there is not enough space above the TextField to show it.
     final TextSelectionPoint startTextSelectionPoint = endpoints[0];
-    final TextSelectionPoint endTextSelectionPoint = (endpoints.length > 1)
-        ? endpoints[1]
-        : null;
+    final TextSelectionPoint endTextSelectionPoint = (endpoints.length > 1) ? endpoints[1] : null;
     final double x = (endTextSelectionPoint == null)
         ? startTextSelectionPoint.point.dx
         : (startTextSelectionPoint.point.dx + endTextSelectionPoint.point.dx) / 2.0;
-    final double availableHeight
-    = globalEditableRegion.top - MediaQuery.of(context).padding.top - _kToolbarScreenPadding;
+    final double availableHeight =
+        globalEditableRegion.top - MediaQuery.of(context).padding.top - _kToolbarScreenPadding;
     final double y = (availableHeight < _kToolbarHeight)
         ? startTextSelectionPoint.point.dy + globalEditableRegion.height + _kToolbarHeight + _kToolbarScreenPadding
         : startTextSelectionPoint.point.dy - globalEditableRegion.height;
@@ -181,9 +209,7 @@ class _CustomTextSelectionControls extends TextSelectionControls {
       width: _kHandleSize,
       height: _kHandleSize,
       child: CustomPaint(
-        painter: _TextSelectionHandlePainter(
-            color: Theme.of(context).textSelectionHandleColor
-        ),
+        painter: _TextSelectionHandlePainter(color: Theme.of(context).textSelectionHandleColor),
       ),
     );
 
@@ -228,7 +254,8 @@ class _CustomTextSelectionControls extends TextSelectionControls {
     // Android allows SelectAll when selection is not collapsed, unless
     // everything has already been selected.
     final TextEditingValue value = delegate.textEditingValue;
-    return delegate.selectAllEnabled && value.text.isNotEmpty &&
+    return delegate.selectAllEnabled &&
+        value.text.isNotEmpty &&
         !(value.selection.start == 0 && value.selection.end == value.text.length);
   }
 }
