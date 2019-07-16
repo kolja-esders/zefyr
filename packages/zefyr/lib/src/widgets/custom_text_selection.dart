@@ -29,7 +29,7 @@ class _TextSelectionToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> items = <Widget>[];
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    //final MaterialLocalizations localizations = MaterialLocalizations.of(context);
 
     if (handleCut != null)
       items.add(
