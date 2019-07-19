@@ -22,6 +22,8 @@ abstract class ZefyrImageDelegate<S> {
   /// Returns unique string key for the selected image. Returned key is stored
   /// in the document.
   Future<String> pickImage(S source);
+
+  Future<String> getDoodle();
 }
 
 class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
@@ -37,6 +39,11 @@ class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
     final file = await ImagePicker.pickImage(source: source);
     if (file == null) return null;
     return file.uri.toString();
+  }
+
+  @override
+  Future<String> getDoodle() {
+    return Future.value('');
   }
 }
 
