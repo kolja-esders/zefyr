@@ -23,7 +23,7 @@ abstract class ZefyrImageDelegate<S> {
   /// in the document.
   Future<String> pickImage(S source);
 
-  Future<String> getDoodle();
+  Future<String> getDoodle(BuildContext context);
 }
 
 class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
@@ -42,8 +42,8 @@ class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
   }
 
   @override
-  Future<String> getDoodle() {
-    return Future.value('');
+  Future<String> getDoodle(BuildContext context) {
+    return null;
   }
 }
 

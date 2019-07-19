@@ -308,7 +308,7 @@ class _ImageButtonState extends State<ImageButton> {
 
   void _drawImage() async {
     final editor = ZefyrToolbar.of(context).editor;
-    final image = await editor.imageDelegate.getDoodle();
+    final image = await editor.imageDelegate.getDoodle(context);
     if (image != null)
       editor.formatSelection(NotusAttribute.embed.image(image));
   }
