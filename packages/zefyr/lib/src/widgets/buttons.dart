@@ -319,7 +319,7 @@ class _DrawButtonState extends State<DrawButton> {
     final toolbar = ZefyrToolbar.of(context);
     return toolbar.buildButton(
       context,
-      ZefyrToolbarAction.image,
+      ZefyrToolbarAction.drawImage,
       onPressed: drawImage,
     );
   }
