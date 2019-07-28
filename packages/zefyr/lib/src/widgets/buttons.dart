@@ -285,8 +285,6 @@ class _ImageButtonState extends State<ImageButton> {
             onPressed: _pickFromCamera),
         toolbar.buildButton(context, ZefyrToolbarAction.galleryImage,
             onPressed: _pickFromGallery),
-        toolbar.buildButton(context, ZefyrToolbarAction.drawImage,
-            onPressed: _drawImage),
       ],
     );
     return ZefyrToolbarScaffold(body: buttons);
@@ -305,8 +303,28 @@ class _ImageButtonState extends State<ImageButton> {
     if (image != null)
       editor.formatSelection(NotusAttribute.embed.image(image));
   }
+}
 
-  void _drawImage() async {
+/// Controls behavior of the draw button.
+class DrawButton extends StatefulWidget {
+  const DrawButton({Key key}) : super(key: key);
+
+  @override
+  _DrawButtonState createState() => _DrawButtonState();
+}
+
+class _DrawButtonState extends State<DrawButton> {
+  @override
+  Widget build(BuildContext context) {
+    final toolbar = ZefyrToolbar.of(context);
+    return toolbar.buildButton(
+      context,
+      ZefyrToolbarAction.image,
+      onPressed: drawImage,
+    );
+  }
+
+  void drawImage() async {
     final editor = ZefyrToolbar.of(context).editor;
     final image = await editor.imageDelegate.getDoodle(context);
     if (image != null)
