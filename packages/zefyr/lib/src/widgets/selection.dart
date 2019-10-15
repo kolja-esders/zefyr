@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:ui' as ui;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -404,9 +405,13 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
     // Always return this gesture detector even if handle is an empty container
     // This way we prevent drag gesture from being canceled in case current
     // position is somewhere outside of any visible paragraph block.
-    return new GestureDetector(
-      onPanStart: _handleDragStart,
-      onPanUpdate: _handleDragUpdate,
+    return RawGestureDetector(
+      gestures: <Type, GestureRecognizerFactory>{
+        CustomPanGestureRecognizer: GestureRecognizerFactoryWithHandlers<CustomPanGestureRecognizer>(
+          () => CustomPanGestureRecognizer(onPanDown: _handleDragStart, onPanUpdate: _handleDragUpdate),
+          (CustomPanGestureRecognizer instance) {},
+        ),
+      },
       child: handle,
     );
   }
@@ -425,12 +430,13 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
     }
   }
 
-  void _handleDragStart(DragStartDetails details) {
-    _dragPosition = details.globalPosition;
+  bool _handleDragStart(Offset details) {
+    _dragPosition = Offset(details.dx, details.dy-50);
+    return true;
   }
 
-  void _handleDragUpdate(DragUpdateDetails details) {
-    _dragPosition += details.delta;
+  void _handleDragUpdate(Offset details) {
+    _dragPosition = Offset(details.dx, details.dy-50);
     final globalPoint = _dragPosition;
     final paragraph = _scope.renderContext.boxForGlobalPoint(globalPoint);
     if (paragraph == null) {
@@ -452,6 +458,42 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
       _scope.updateSelection(newSelection, source: ChangeSource.local);
     }
   }
+}
+
+class CustomPanGestureRecognizer extends OneSequenceGestureRecognizer {
+  final Function onPanDown;
+  final Function onPanUpdate;
+
+  CustomPanGestureRecognizer({
+    @required this.onPanDown,
+    @required this.onPanUpdate,
+  });
+
+  @override
+  void addPointer(PointerEvent event) {
+    if (onPanDown(event.position)) {
+      startTrackingPointer(event.pointer);
+      resolve(GestureDisposition.accepted);
+    } else {
+      stopTrackingPointer(event.pointer);
+    }
+  }
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerMoveEvent) {
+      onPanUpdate(event.position);
+    }
+    if (event is PointerUpEvent) {
+      stopTrackingPointer(event.pointer);
+    }
+  }
+
+  @override
+  String get debugDescription => 'customPan';
+
+  @override
+  void didStopTrackingLastPointer(int pointer) {}
 }
 
 class _SelectionToolbar extends StatefulWidget {
