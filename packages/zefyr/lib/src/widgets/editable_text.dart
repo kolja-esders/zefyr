@@ -15,6 +15,7 @@ import 'editor.dart';
 import 'image.dart';
 import 'input.dart';
 import 'list.dart';
+import 'mode.dart';
 import 'paragraph.dart';
 import 'quote.dart';
 import 'render_context.dart';
@@ -35,26 +36,50 @@ class ZefyrEditableText extends StatefulWidget {
     @required this.controller,
     @required this.focusNode,
     @required this.imageDelegate,
-    this.autofocus: true,
-    this.enabled: true,
-    this.padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    this.selectionControls,
+    this.autofocus = true,
+    this.mode = ZefyrMode.edit,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
     this.physics,
     this.placeholder,
-  }) : super(key: key);
+  })  : assert(mode != null),
+        assert(controller != null),
+        assert(focusNode != null),
+        super(key: key);
 
+  /// Controls the document being edited.
   final ZefyrController controller;
+
+  /// Controls whether this editor has keyboard focus.
   final FocusNode focusNode;
   final ZefyrImageDelegate imageDelegate;
+
+  /// Whether this text field should focus itself if nothing else is already
+  /// focused.
+  ///
+  /// If true, the keyboard will open as soon as this text field obtains focus.
+  /// Otherwise, the keyboard is only shown after the user taps the text field.
+  ///
+  /// Defaults to true. Cannot be null.
   final bool autofocus;
-  final bool enabled;
+
+  /// Editing mode of this text field.
+  final ZefyrMode mode;
+
+  /// Controls physics of scrollable text field.
   final ScrollPhysics physics;
   final String placeholder;
+
+  /// Optional delegate for building the text selection handles and toolbar.
+  ///
+  /// If not provided then platform-specific implementation is used by default.
+  final TextSelectionControls selectionControls;
 
   /// Padding around editable area.
   final EdgeInsets padding;
 
   @override
-  _ZefyrEditableTextState createState() => new _ZefyrEditableTextState();
+  _ZefyrEditableTextState createState() => _ZefyrEditableTextState();
 }
 
 class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKeepAliveClientMixin {
@@ -79,21 +104,30 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   /// focus, the control will then attach to the keyboard and request that the
   /// keyboard become visible.
   void requestKeyboard() {
-    if (_focusNode.hasFocus)
+    if (_focusNode.hasFocus) {
       _input.openConnection(widget.controller.plainTextEditingValue);
-    else
+    } else {
       FocusScope.of(context).requestFocus(_focusNode);
+    }
   }
 
   void focusOrUnfocusIfNeeded() {
-    if (!_didAutoFocus && widget.autofocus && widget.enabled) {
+    if (!_didAutoFocus && widget.autofocus && widget.mode.canEdit) {
       FocusScope.of(context).autofocus(_focusNode);
       _didAutoFocus = true;
     }
-    if (!widget.enabled && _focusNode.hasFocus) {
+    if (!widget.mode.canEdit && _focusNode.hasFocus) {
       _didAutoFocus = false;
       _focusNode.unfocus();
     }
+  }
+
+  TextSelectionControls defaultSelectionControls(BuildContext context) {
+    TargetPlatform platform = Theme.of(context).platform;
+    if (platform == TargetPlatform.iOS) {
+      return cupertinoTextSelectionControls;
+    }
+    return materialTextSelectionControls;
   }
 
   //
@@ -107,14 +141,16 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
 
     Widget body = ListBody(children: _buildChildren(context));
     if (widget.padding != null) {
-      body = new Padding(padding: widget.padding, child: body);
+      body = Padding(padding: widget.padding, child: body);
     }
-    final scrollable = SingleChildScrollView(
+
+    body = SingleChildScrollView(
       physics: widget.physics,
       controller: _scrollController,
       child: body,
     );
 
+<<<<<<< HEAD
     bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final controls = isAndroid ? customTextSelectionControls : cupertinoTextSelectionControls;
 
@@ -140,6 +176,12 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
         overlay: overlay,
       ));
     }
+=======
+    final layers = <Widget>[body];
+    layers.add(ZefyrSelectionOverlay(
+      controls: widget.selectionControls ?? defaultSelectionControls(context),
+    ));
+>>>>>>> 7f102b9943ae37c6520d081a2b084d704bfa90b3
 
     return Stack(fit: StackFit.expand, children: layers);
   }
@@ -153,8 +195,12 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
     _focusNode = widget.focusNode;
     super.initState();
     _focusAttachment = _focusNode.attach(context);
+<<<<<<< HEAD
     _input = new InputConnectionController(_handleRemoteValueChange);
     _focusAttachment = widget.focusNode.attach(context);
+=======
+    _input = InputConnectionController(_handleRemoteValueChange);
+>>>>>>> 7f102b9943ae37c6520d081a2b084d704bfa90b3
     _updateSubscriptions();
   }
 
@@ -228,26 +274,26 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   Widget _defaultChildBuilder(BuildContext context, Node node) {
     if (node is LineNode) {
       if (node.hasEmbed) {
-        return new RawZefyrLine(node: node);
+        return RawZefyrLine(node: node);
       } else if (node.style.contains(NotusAttribute.heading)) {
-        return new ZefyrHeading(node: node);
+        return ZefyrHeading(node: node);
       }
-      return new ZefyrParagraph(node: node);
+      return ZefyrParagraph(node: node);
     }
 
     final BlockNode block = node;
     final blockStyle = block.style.get(NotusAttribute.block);
     if (blockStyle == NotusAttribute.block.code) {
-      return new ZefyrCode(node: block);
+      return ZefyrCode(node: block);
     } else if (blockStyle == NotusAttribute.block.bulletList) {
-      return new ZefyrList(node: block);
+      return ZefyrList(node: block);
     } else if (blockStyle == NotusAttribute.block.numberList) {
-      return new ZefyrList(node: block);
+      return ZefyrList(node: block);
     } else if (blockStyle == NotusAttribute.block.quote) {
-      return new ZefyrQuote(node: block);
+      return ZefyrQuote(node: block);
     }
 
-    throw new UnimplementedError('Block format $blockStyle.');
+    throw UnimplementedError('Block format $blockStyle.');
   }
 
   void _updateSubscriptions([ZefyrEditableText oldWidget]) {
@@ -279,7 +325,12 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
 
   // Triggered for both text and selection changes.
   void _handleLocalValueChange() {
+<<<<<<< HEAD
     if (widget.enabled && widget.controller.lastChangeSource == ChangeSource.local) {
+=======
+    if (widget.mode.canEdit &&
+        widget.controller.lastChangeSource == ChangeSource.local) {
+>>>>>>> 7f102b9943ae37c6520d081a2b084d704bfa90b3
       // Only request keyboard for user actions.
       requestKeyboard();
     }

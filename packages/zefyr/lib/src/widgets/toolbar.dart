@@ -67,7 +67,7 @@ class ZefyrToolbarScaffold extends StatelessWidget {
     Key key,
     @required this.body,
     this.trailing,
-    this.autoImplyTrailing: true,
+    this.autoImplyTrailing = true,
   }) : super(key: key);
 
   final Widget body;
@@ -89,7 +89,7 @@ class ZefyrToolbarScaffold extends StatelessWidget {
     } else if (autoImplyTrailing) {
       children.add(toolbar.buildButton(context, ZefyrToolbarAction.close));
     }
-    return new Container(
+    return Container(
       constraints: constraints,
       child: Material(color: theme.color, child: Row(children: children)),
     );
@@ -103,7 +103,7 @@ class ZefyrToolbar extends StatefulWidget implements PreferredSizeWidget {
   const ZefyrToolbar({
     Key key,
     @required this.editor,
-    this.autoHide: true,
+    this.autoHide = true,
     this.delegate,
   }) : super(key: key);
 
@@ -123,7 +123,7 @@ class ZefyrToolbar extends StatefulWidget implements PreferredSizeWidget {
   ZefyrToolbarState createState() => ZefyrToolbarState();
 
   @override
-  ui.Size get preferredSize => new Size.fromHeight(ZefyrToolbar.kToolbarHeight);
+  ui.Size get preferredSize => Size.fromHeight(ZefyrToolbar.kToolbarHeight);
 }
 
 class _ZefyrToolbarScope extends InheritedWidget {
@@ -166,7 +166,7 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
 
   Future<void> showOverlay(WidgetBuilder builder) async {
     assert(_overlayBuilder == null);
-    final completer = new Completer<void>();
+    final completer = Completer<void>();
     setState(() {
       _overlayBuilder = builder;
       _overlayCompleter = completer;
@@ -193,9 +193,9 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   @override
   void initState() {
     super.initState();
-    _delegate = widget.delegate ?? new _DefaultZefyrToolbarDelegate();
-    _overlayAnimation = new AnimationController(
-        vsync: this, duration: Duration(milliseconds: 100));
+    _delegate = widget.delegate ?? _DefaultZefyrToolbarDelegate();
+    _overlayAnimation =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
     _selection = editor.selection;
   }
 
@@ -203,7 +203,7 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   void didUpdateWidget(ZefyrToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.delegate != oldWidget.delegate) {
-      _delegate = widget.delegate ?? new _DefaultZefyrToolbarDelegate();
+      _delegate = widget.delegate ?? _DefaultZefyrToolbarDelegate();
     }
   }
 
@@ -228,7 +228,7 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
     layers.add(toolbar);
 
     if (hasOverlay) {
-      Widget widget = new Builder(builder: _overlayBuilder);
+      Widget widget = Builder(builder: _overlayBuilder);
       assert(widget != null);
       final overlay = FadeTransition(
         key: _overlayKey,
@@ -260,7 +260,7 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
       buildButton(context, ZefyrToolbarAction.quote),
       buildButton(context, ZefyrToolbarAction.code),
       buildButton(context, ZefyrToolbarAction.horizontalRule),
-      ImageButton(),
+      if (editor.imageDelegate != null) ImageButton(),
       DrawButton(),
     ];
     return buttons;
@@ -277,7 +277,7 @@ class ZefyrButtonList extends StatefulWidget {
 }
 
 class _ZefyrButtonListState extends State<ZefyrButtonList> {
-  final ScrollController _controller = new ScrollController();
+  final ScrollController _controller = ScrollController();
   bool _showLeftArrow = false;
   bool _showRightArrow = false;
 

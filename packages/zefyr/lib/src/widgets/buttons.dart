@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:notus/notus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -84,11 +83,11 @@ class ZefyrButton extends StatelessWidget {
       );
     } else {
       assert(_text != null);
-      var style = _textStyle ?? new TextStyle();
+      var style = _textStyle ?? TextStyle();
       style = style.copyWith(color: iconColor);
       return RawZefyrButton(
         action: action,
-        child: new Text(_text, style: style),
+        child: Text(_text, style: style),
         color: _getColor(editor, toolbarTheme),
         onPressed: _getPressedHandler(editor, toolbar),
       );
@@ -168,7 +167,7 @@ class RawZefyrButton extends StatelessWidget {
     Color iconColor,
     @required this.color,
     @required this.onPressed,
-  })  : child = new Icon(icon, size: size, color: iconColor),
+  })  : child = Icon(icon, size: size, color: iconColor),
         super();
 
   /// Toolbar action associated with this button.
@@ -292,16 +291,20 @@ class _ImageButtonState extends State<ImageButton> {
 
   void _pickFromCamera() async {
     final editor = ZefyrToolbar.of(context).editor;
-    final image = await editor.imageDelegate.pickImage(ImageSource.camera);
-    if (image != null)
+    final image =
+        await editor.imageDelegate.pickImage(editor.imageDelegate.cameraSource);
+    if (image != null) {
       editor.formatSelection(NotusAttribute.embed.image(image));
+    }
   }
 
   void _pickFromGallery() async {
     final editor = ZefyrToolbar.of(context).editor;
-    final image = await editor.imageDelegate.pickImage(ImageSource.gallery);
-    if (image != null)
+    final image = await editor.imageDelegate
+        .pickImage(editor.imageDelegate.gallerySource);
+    if (image != null) {
       editor.formatSelection(NotusAttribute.embed.image(image));
+    }
   }
 }
 
@@ -385,7 +388,7 @@ class _LinkButtonState extends State<LinkButton> {
   void edit() {
     final toolbar = ZefyrToolbar.of(context);
     setState(() {
-      _inputKey = new UniqueKey();
+      _inputKey = UniqueKey();
       _inputController.text = getLink('https://');
       _inputController.addListener(_handleInputChange);
       toolbar.markNeedsRebuild();
@@ -444,7 +447,7 @@ class _LinkButtonState extends State<LinkButton> {
   void copyToClipboard() {
     var link = getLink();
     assert(link != null);
-    Clipboard.setData(new ClipboardData(text: link));
+    Clipboard.setData(ClipboardData(text: link));
   }
 
   void openInBrowser() async {
@@ -519,12 +522,12 @@ class _LinkInput extends StatefulWidget {
   final bool formatError;
 
   const _LinkInput(
-      {Key key, @required this.controller, this.formatError: false})
+      {Key key, @required this.controller, this.formatError = false})
       : super(key: key);
 
   @override
   _LinkInputState createState() {
-    return new _LinkInputState();
+    return _LinkInputState();
   }
 }
 
@@ -572,7 +575,7 @@ class _LinkInputState extends State<_LinkInput> {
       focusNode: _focusNode,
       controller: widget.controller,
       autofocus: true,
-      decoration: new InputDecoration(
+      decoration: InputDecoration(
         hintText: 'https://',
         filled: true,
         fillColor: toolbarTheme.color,
@@ -593,7 +596,7 @@ class _LinkView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final toolbarTheme = ZefyrTheme.of(context).toolbarTheme;
-    Widget widget = new ClipRect(
+    Widget widget = ClipRect(
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: <Widget>[
