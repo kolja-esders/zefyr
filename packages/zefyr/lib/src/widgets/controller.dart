@@ -112,10 +112,8 @@ class ZefyrController extends ChangeNotifier {
       delta = document.replace(index, length, text);
       // If the delta is a classical insert operation and we have toggled
       // some style, then we apply it to our document.
-      if (delta != null &&
-          toggledStyles.isNotEmpty &&
-          delta.length == 2 &&
-          delta[1].isInsert) {
+      if (toggledStyles.isNotEmpty && delta != null && delta.isNotEmpty &&
+          delta.last.isInsert) {
         // Apply it.
         Delta retainDelta = new Delta()
           ..retain(index)
