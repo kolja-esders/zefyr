@@ -125,15 +125,12 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
       if (_shouldShowPlaceholder()) {
         final theme = ZefyrTheme.of(context);
         TextStyle style = theme.paragraphTheme.textStyle
-            .merge(TextStyle(color: Theme
-            .of(context)
-            .hintColor));
-        final placeholderDocument = NotusDocument()
-          ..insert(0, widget.placeholder);
+            .merge(TextStyle(color: Theme.of(context).hintColor, height: 1.25, fontSize: 20));
         layers.add(
-          RawZefyrLine(node: placeholderDocument.root.first,
-            style: style,
-            padding: widget.padding,),
+          Padding(
+            padding: widget.padding,
+            child: Text(widget.placeholder, style: style),
+          ),
         );
       }
 
