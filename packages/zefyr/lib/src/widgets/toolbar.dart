@@ -32,6 +32,7 @@ enum ZefyrToolbarAction {
   cameraImage,
   galleryImage,
   drawImage,
+  searchImage,
   hideKeyboard,
   close,
   confirm,

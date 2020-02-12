@@ -286,6 +286,7 @@ class _ImageButtonState extends State<ImageButton> {
             onPressed: _pickFromCamera),
         toolbar.buildButton(context, ZefyrToolbarAction.galleryImage,
             onPressed: _pickFromGallery),
+        ImageSearchButton(),
       ],
     );
     return ZefyrToolbarScaffold(body: buttons);
@@ -330,6 +331,31 @@ class _DrawButtonState extends State<DrawButton> {
     final image = await editor.imageDelegate.getDoodle(context);
     if (image != null)
       editor.formatSelection(NotusAttribute.embed.image(image));
+  }
+}
+
+class ImageSearchButton extends StatefulWidget {
+  const ImageSearchButton({Key key}) : super(key: key);
+
+  @override
+  _ImageSearchButtonState createState() => _ImageSearchButtonState();
+}
+
+class _ImageSearchButtonState extends State<ImageSearchButton> {
+  @override
+  Widget build(BuildContext context) {
+    final toolbar = ZefyrToolbar.of(context);
+    return toolbar.buildButton(
+      context,
+      ZefyrToolbarAction.searchImage,
+      onPressed: searchImage,
+    );
+  }
+
+  void searchImage() async {
+    final editor = ZefyrToolbar.of(context).editor;
+    final image = await editor.imageDelegate.getSearchImage(context);
+    if (image != null) editor.formatSelection(NotusAttribute.embed.image(image));
   }
 }
 
