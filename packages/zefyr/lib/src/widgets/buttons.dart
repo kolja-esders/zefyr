@@ -327,28 +327,22 @@ class DrawButton extends StatelessWidget {
   }
 }
 
-class ImageSearchButton extends StatefulWidget {
-  const ImageSearchButton({Key key}) : super(key: key);
+class ImageSearchButton extends StatelessWidget {
+  void searchImage(BuildContext context) async {
+    final editor = ZefyrToolbar.of(context).editor;
+    final image = await editor.imageDelegate.getSearchImage(context);
+    if (image != null)
+      editor.formatSelection(NotusAttribute.embed.image(image));
+  }
 
-  @override
-  _ImageSearchButtonState createState() => _ImageSearchButtonState();
-}
-
-class _ImageSearchButtonState extends State<ImageSearchButton> {
   @override
   Widget build(BuildContext context) {
     final toolbar = ZefyrToolbar.of(context);
     return toolbar.buildButton(
       context,
       ZefyrToolbarAction.searchImage,
-      onPressed: searchImage,
+      onPressed: () => searchImage(context),
     );
-  }
-
-  void searchImage() async {
-    final editor = ZefyrToolbar.of(context).editor;
-    final image = await editor.imageDelegate.getSearchImage(context);
-    if (image != null) editor.formatSelection(NotusAttribute.embed.image(image));
   }
 }
 
