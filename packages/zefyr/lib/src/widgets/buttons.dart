@@ -309,7 +309,7 @@ class _ImageButtonState extends State<ImageButton> {
 
 /// Controls behavior of the draw button.
 class DrawButton extends StatelessWidget {
-  void drawImage(BuildContext context) async {
+  void _drawImage(BuildContext context) async {
     final editor = ZefyrToolbar.of(context).editor;
     final image = await editor.imageDelegate.getDoodle(context);
     if (image != null)
@@ -322,13 +322,13 @@ class DrawButton extends StatelessWidget {
     return toolbar.buildButton(
       context,
       ZefyrToolbarAction.drawImage,
-      onPressed: () => drawImage(context),
+      onPressed: () => _drawImage(context),
     );
   }
 }
 
 class ImageSearchButton extends StatelessWidget {
-  void searchImage(BuildContext context) async {
+  void _searchImage(BuildContext context) async {
     final editor = ZefyrToolbar.of(context).editor;
     final image = await editor.imageDelegate.getSearchImage(context);
     if (image != null)
@@ -341,7 +341,7 @@ class ImageSearchButton extends StatelessWidget {
     return toolbar.buildButton(
       context,
       ZefyrToolbarAction.searchImage,
-      onPressed: () => searchImage(context),
+      onPressed: () => _searchImage(context),
     );
   }
 }
