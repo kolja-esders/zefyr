@@ -82,6 +82,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
   @override
   void initState() {
     super.initState();
+    _scope = ZefyrScope.view(imageDelegate: widget.imageDelegate);
     _imageDelegate = widget.imageDelegate ?? new ZefyrDefaultImageDelegate();
   }
 
@@ -101,11 +102,9 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
     super.didChangeDependencies();
     final parentTheme = ZefyrTheme.of(context, nullOk: true);
     final fallbackTheme = ZefyrThemeData.fallback(context);
-    _themeData = (parentTheme != null)
-        ? fallbackTheme.merge(parentTheme)
-        : fallbackTheme;
+    _themeData = (parentTheme != null) ? fallbackTheme.merge(parentTheme) : fallbackTheme;
 
-    if (_scope == null) {
+    /*if (_scope == null) {
       _scope = ZefyrScope.editable(
         imageDelegate: _imageDelegate,
         controller: widget.controller,
@@ -116,7 +115,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
     } else {
       final focusScope = FocusScope.of(context);
       _scope.focusScope = focusScope;
-    }
+    }*/
 
     final scaffold = ZefyrScaffold.of(context);
     if (_scaffold != scaffold) {
@@ -136,11 +135,11 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
   @override
   Widget build(BuildContext context) {
     Widget editable = new ZefyrEditableText(
-      controller: _scope.controller,
+      controller: widget.controller,
       focusNode: _scope.focusNode,
       imageDelegate: _scope.imageDelegate,
       autofocus: widget.autofocus,
-      enabled: widget.enabled,
+      enabled: false,
       padding: widget.padding,
       physics: widget.physics,
       placeholder: widget.placeholder,

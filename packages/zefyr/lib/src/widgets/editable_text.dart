@@ -102,7 +102,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
 
   @override
   Widget build(BuildContext context) {
-    _focusAttachment.reparent();
+    //_focusAttachment.reparent();
     super.build(context); // See AutomaticKeepAliveState.
 
     Widget body = ListBody(children: _buildChildren(context));
@@ -145,23 +145,24 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   }
 
   bool _shouldShowPlaceholder() {
-    return widget.placeholder != null && (document.length == 0 || document.length == 1 && document.collectStyle(0, 1).isEmpty);
+    return widget.placeholder != null &&
+        (document.length == 0 || document.length == 1 && document.collectStyle(0, 1).isEmpty);
   }
 
   @override
   void initState() {
     _focusNode = widget.focusNode;
     super.initState();
-    _focusAttachment = _focusNode.attach(context);
+    /*_focusAttachment = _focusNode.attach(context);
     _input = new InputConnectionController(_handleRemoteValueChange);
     _focusAttachment = widget.focusNode.attach(context);
-    _updateSubscriptions();
+    _updateSubscriptions();*/
   }
 
   @override
   void didUpdateWidget(ZefyrEditableText oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (_focusNode != widget.focusNode) {
+    /*if (_focusNode != widget.focusNode) {
       _focusAttachment.detach();
       _focusNode = widget.focusNode;
       _focusAttachment = _focusNode.attach(context);
@@ -172,13 +173,13 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
       _focusAttachment?.detach();
       _focusAttachment = widget.focusNode.attach(context);
       updateKeepAlive();
-    }
+    }*/
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final scope = ZefyrScope.of(context);
+    /*final scope = ZefyrScope.of(context);
     if (_renderContext != scope.renderContext) {
       _renderContext?.removeListener(_handleRenderContextChange);
       _renderContext = scope.renderContext;
@@ -189,14 +190,14 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
       _cursorTimer = scope.cursorTimer;
       _cursorTimer.startOrStop(_focusNode, selection);
     }
-    focusOrUnfocusIfNeeded();
+    focusOrUnfocusIfNeeded();*/
   }
 
   @override
   void dispose() {
-    _focusAttachment.detach();
+    /*_focusAttachment.detach();
     _cancelSubscriptions();
-    _focusAttachment.detach();
+    _focusAttachment.detach();*/
     super.dispose();
   }
 
@@ -205,7 +206,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   //
 
   @override
-  bool get wantKeepAlive => _focusNode.hasFocus;
+  bool get wantKeepAlive => true; /*_focusNode.hasFocus;*/
 
   //
   // Private members
@@ -291,8 +292,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText> with AutomaticKee
   }
 
   void _handleFocusChange() {
-    _input.openOrCloseConnection(
-        _focusNode, widget.controller.plainTextEditingValue);
+    _input.openOrCloseConnection(_focusNode, widget.controller.plainTextEditingValue);
     _cursorTimer.startOrStop(_focusNode, selection);
     updateKeepAlive();
   }
