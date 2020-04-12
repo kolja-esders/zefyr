@@ -287,6 +287,8 @@ class _ImageButtonState extends State<ImageButton> {
         toolbar.buildButton(context, ZefyrToolbarAction.galleryImage,
             onPressed: _pickFromGallery),
         ImageSearchButton(),
+        toolbar.buildButton(context, ZefyrToolbarAction.textRecognition,
+            onPressed: _getRecognizedText),
       ],
     );
     return ZefyrToolbarScaffold(body: buttons);
@@ -304,6 +306,14 @@ class _ImageButtonState extends State<ImageButton> {
     final image = await editor.imageDelegate.pickImage(ImageSource.gallery);
     if (image != null)
       editor.formatSelection(NotusAttribute.embed.image(image));
+  }
+
+  void _getRecognizedText() async {
+    final editor = ZefyrToolbar.of(context).editor;
+    final recognizedText =
+        await editor.imageDelegate.getRecognizedText(context);
+    if (recognizedText != null)
+      editor.controller.replaceText(editor.selection.start, 0, recognizedText);
   }
 }
 

@@ -26,6 +26,8 @@ abstract class ZefyrImageDelegate<S> {
   Future<String> getDoodle(BuildContext context);
 
   Future<String> getSearchImage(BuildContext context);
+
+  Future<String> getRecognizedText(BuildContext context);
 }
 
 class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
@@ -53,6 +55,12 @@ class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
   Future<String> getSearchImage(BuildContext context) {
     throw UnsupportedError(
         'A default search image function is not supported, provide an own version.');
+  }
+
+  @override
+  Future<String> getRecognizedText(BuildContext context) {
+    throw UnimplementedError(
+        'A default text recognition is not yet implemented, provide an own version.');
   }
 }
 
