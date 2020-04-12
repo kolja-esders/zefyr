@@ -24,6 +24,8 @@ abstract class ZefyrImageDelegate<S> {
   Future<String> pickImage(S source);
 
   Future<String> getDoodle(BuildContext context);
+
+  Future<String> getSearchImage(BuildContext context);
 }
 
 class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
@@ -43,7 +45,14 @@ class ZefyrDefaultImageDelegate implements ZefyrImageDelegate<ImageSource> {
 
   @override
   Future<String> getDoodle(BuildContext context) {
-    return null;
+    throw UnimplementedError(
+        'A default doodle function is not yet implemented, provide an own version.');
+  }
+
+  @override
+  Future<String> getSearchImage(BuildContext context) {
+    throw UnsupportedError(
+        'A default search image function is not supported, provide an own version.');
   }
 }
 
