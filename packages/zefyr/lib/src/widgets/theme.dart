@@ -45,8 +45,7 @@ class ZefyrTheme extends InheritedWidget {
   static ZefyrThemeData of(BuildContext context, {bool nullOk: false}) {
     final ZefyrTheme widget = context.inheritFromWidgetOfExactType(ZefyrTheme);
     if (widget == null && nullOk) return null;
-    assert(widget != null,
-        '$ZefyrTheme.of() called with a context that does not contain a ZefyrEditor.');
+    assert(widget != null, '$ZefyrTheme.of() called with a context that does not contain a ZefyrEditor.');
     return widget.data;
   }
 }
@@ -78,17 +77,15 @@ class ZefyrThemeData {
     final padding = const EdgeInsets.only(bottom: 16.0);
     final boldStyle = new TextStyle(fontWeight: FontWeight.bold);
     final italicStyle = new TextStyle(fontStyle: FontStyle.italic);
-    final linkStyle =
-        TextStyle(color: Colors.blue, decoration: TextDecoration.underline);
+    final linkStyle = TextStyle(color: Colors.blue, decoration: TextDecoration.underline);
 
     return new ZefyrThemeData(
       boldStyle: boldStyle,
       italicStyle: italicStyle,
       linkStyle: linkStyle,
-      paragraphTheme:
-          new StyleTheme(textStyle: paragraphStyle, padding: padding),
+      paragraphTheme: new StyleTheme(textStyle: paragraphStyle, padding: padding),
       headingTheme: new HeadingTheme.fallback(),
-      blockTheme: new BlockTheme.fallback(),
+      blockTheme: new BlockTheme.fallback(context),
       selectionColor: Colors.lightBlueAccent.shade100,
       cursorColor: Colors.black,
       indentSize: 16.0,
@@ -230,19 +227,37 @@ class BlockTheme {
   });
 
   /// Creates fallback theme for blocks.
-  factory BlockTheme.fallback() {
-    final padding = const EdgeInsets.only(bottom: 8.0);
-    return new BlockTheme(
-      bulletList: new StyleTheme(padding: padding),
-      numberList: new StyleTheme(padding: padding),
-      quote: new StyleTheme(
-        textStyle: new TextStyle(color: Colors.grey.shade700),
+  factory BlockTheme.fallback(BuildContext context) {
+    final themeData = Theme.of(context);
+    final defaultTextStyle = DefaultTextStyle.of(context);
+    final padding = const EdgeInsets.symmetric(vertical: 8.0);
+    String fontFamily;
+    switch (themeData.platform) {
+      case TargetPlatform.iOS:
+        fontFamily = 'Menlo';
+        break;
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.windows:
+      case TargetPlatform.macOS:
+      case TargetPlatform.linux:
+        fontFamily = 'Roboto Mono';
+        break;
+    }
+
+    return BlockTheme(
+      bulletList: StyleTheme(padding: padding),
+      numberList: StyleTheme(padding: padding),
+      quote: StyleTheme(
+        textStyle: TextStyle(
+          color: defaultTextStyle.style.color.withOpacity(0.6),
+        ),
         padding: padding,
       ),
-      code: new StyleTheme(
-        textStyle: new TextStyle(
-          color: Colors.blueGrey.shade800,
-          fontFamily: Platform.isIOS ? 'Menlo' : 'Roboto Mono',
+      code: StyleTheme(
+        textStyle: TextStyle(
+          color: defaultTextStyle.style.color.withOpacity(0.8),
+          fontFamily: fontFamily,
           fontSize: 14.0,
           height: 1.25,
         ),

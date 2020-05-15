@@ -5,12 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:zefyr/util.dart';
 
-typedef RemoteValueChanged = Function(
-    int start, String deleted, String inserted, TextSelection selection);
+typedef RemoteValueChanged = Function(int start, String deleted, String inserted, TextSelection selection);
 
 class InputConnectionController implements TextInputClient {
-  InputConnectionController(this.onValueChanged)
-      : assert(onValueChanged != null);
+  InputConnectionController(this.onValueChanged) : assert(onValueChanged != null);
 
   //
   // New public members
@@ -19,8 +17,7 @@ class InputConnectionController implements TextInputClient {
   final RemoteValueChanged onValueChanged;
 
   /// Returns `true` if there is open input connection.
-  bool get hasConnection =>
-      _textInputConnection != null && _textInputConnection.attached;
+  bool get hasConnection => _textInputConnection != null && _textInputConnection.attached;
 
   /// Opens or closes input connection based on the current state of
   /// [focusNode] and [value].
@@ -159,19 +156,12 @@ class InputConnectionController implements TextInputClient {
     }
   }
 
-  //
-  // Private members
-  //
-
-  final List<TextEditingValue> _sentRemoteValues = [];
-  TextInputConnection _textInputConnection;
-  TextEditingValue _lastKnownRemoteTextEditingValue;
-
   @override
   void updateFloatingCursor(RawFloatingCursorPoint point) {
     // TODO: implement updateFloatingCursor
   }
-    @override
+
+  @override
   void connectionClosed() {
     if (hasConnection) {
       _textInputConnection.connectionClosedReceived();
@@ -180,4 +170,15 @@ class InputConnectionController implements TextInputClient {
       _sentRemoteValues.clear();
     }
   }
+
+  @override
+  TextEditingValue get currentTextEditingValue => _lastKnownRemoteTextEditingValue;
+
+  //
+  // Private members
+  //
+
+  final List<TextEditingValue> _sentRemoteValues = [];
+  TextInputConnection _textInputConnection;
+  TextEditingValue _lastKnownRemoteTextEditingValue;
 }

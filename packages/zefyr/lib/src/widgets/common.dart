@@ -1,7 +1,9 @@
 // Copyright (c) 2018, the Zefyr project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notus/notus.dart';
@@ -49,7 +51,7 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     if (scope.isEditable) {
       ensureVisible(context, scope);
     }
-    final theme = ZefyrTheme.of(context);
+    final theme = Theme.of(context);
 
     Widget content;
     if (widget.node.hasEmbed) {
@@ -63,6 +65,21 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     }
 
     if (scope.isEditable) {
+      Color cursorColor;
+      switch (theme.platform) {
+        case TargetPlatform.iOS:
+          cursorColor ??= CupertinoTheme.of(context).primaryColor;
+          break;
+
+        case TargetPlatform.android:
+        case TargetPlatform.fuchsia:
+        case TargetPlatform.windows:
+        case TargetPlatform.macOS:
+        case TargetPlatform.linux:
+          cursorColor = theme.cursorColor;
+          break;
+      }
+
       content = EditableBox(
         child: content,
         node: widget.node,
@@ -70,8 +87,8 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
         renderContext: scope.renderContext,
         showCursor: scope.showCursor,
         selection: scope.selection,
-        selectionColor: theme.selectionColor,
-        cursorColor: theme.cursorColor,
+        selectionColor: theme.textSelectionColor,
+        cursorColor: cursorColor,
       );
       content = CompositedTransformTarget(link: _link, child: content);
     }
@@ -83,8 +100,7 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
   }
 
   void ensureVisible(BuildContext context, ZefyrScope scope) {
-    if (scope.selection.isCollapsed &&
-        widget.node.containsOffset(scope.selection.extentOffset)) {
+    if (scope.selection.isCollapsed && widget.node.containsOffset(scope.selection.extentOffset)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         bringIntoView(context);
       });
@@ -114,9 +130,8 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
 
   TextSpan buildText(BuildContext context) {
     final theme = ZefyrTheme.of(context);
-    final List<TextSpan> children = widget.node.children
-        .map((node) => _segmentToTextSpan(node, theme))
-        .toList(growable: false);
+    final List<TextSpan> children =
+        widget.node.children.map((node) => _segmentToTextSpan(node, theme)).toList(growable: false);
     return new TextSpan(style: widget.style, children: children);
   }
 
@@ -125,10 +140,7 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     final attrs = segment.style;
 
     return attrs.contains(NotusAttribute.link)
-        ? LinkTextSpan(
-            style: _getTextStyle(attrs, theme),
-            text: segment.value,
-            url: attrs.value(NotusAttribute.link))
+        ? LinkTextSpan(style: _getTextStyle(attrs, theme), text: segment.value, url: attrs.value(NotusAttribute.link))
         : TextSpan(
             text: segment.value,
             style: _getTextStyle(attrs, theme),
@@ -168,6 +180,5 @@ class LinkTextSpan extends TextSpan {
       : super(
             style: style,
             text: text ?? url,
-            recognizer: new TapGestureRecognizer()
-              ..onTap = () => launcher.launch(url));
+            recognizer: new TapGestureRecognizer()..onTap = () => launcher.launch(url));
 }
