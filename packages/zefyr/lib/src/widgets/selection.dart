@@ -431,12 +431,12 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver> {
   }
 
   bool _handleDragStart(Offset details) {
-    _dragPosition = Offset(details.dx, details.dy-50);
+    _dragPosition = Offset(details.dx, details.dy - 50);
     return true;
   }
 
   void _handleDragUpdate(Offset details) {
-    _dragPosition = Offset(details.dx, details.dy-50);
+    _dragPosition = Offset(details.dx, details.dy - 50);
     final globalPoint = _dragPosition;
     final paragraph = _scope.renderContext.boxForGlobalPoint(globalPoint);
     if (paragraph == null) {
@@ -559,7 +559,7 @@ class _SelectionToolbarState extends State<_SelectionToolbar> {
       block.localToGlobal(block.size.bottomRight(Offset.zero)),
     );
     final toolbar = widget.controls.buildToolbar(
-        context, editingRegion, widget.renderObject.preferredLineHeight, midpoint, endpoints, widget.delegate);
+        context, editingRegion, widget.renderObject.preferredLineHeight, midpoint, endpoints, widget.delegate, null);
     return new CompositedTransformFollower(
       link: block.layerLink,
       showWhenUnlinked: false,
