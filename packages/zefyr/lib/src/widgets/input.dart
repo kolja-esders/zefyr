@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:zefyr/util.dart';
 
-typedef RemoteValueChanged = Function(int start, String deleted, String inserted, TextSelection selection);
+typedef RemoteValueChanged = Function(
+    int start, String deleted, String inserted, TextSelection selection);
 
 class InputConnectionController implements TextInputClient {
-  InputConnectionController(this.onValueChanged) : assert(onValueChanged != null);
+  InputConnectionController(this.onValueChanged)
+      : assert(onValueChanged != null);
 
   //
   // New public members
@@ -17,7 +19,8 @@ class InputConnectionController implements TextInputClient {
   final RemoteValueChanged onValueChanged;
 
   /// Returns `true` if there is open input connection.
-  bool get hasConnection => _textInputConnection != null && _textInputConnection.attached;
+  bool get hasConnection =>
+      _textInputConnection != null && _textInputConnection.attached;
 
   /// Opens or closes input connection based on the current state of
   /// [focusNode] and [value].
@@ -172,7 +175,8 @@ class InputConnectionController implements TextInputClient {
   }
 
   @override
-  TextEditingValue get currentTextEditingValue => _lastKnownRemoteTextEditingValue;
+  TextEditingValue get currentTextEditingValue =>
+      _lastKnownRemoteTextEditingValue;
 
   //
   // Private members
@@ -187,4 +191,9 @@ class InputConnectionController implements TextInputClient {
 
   @override
   void showAutocorrectionPromptRect(int start, int end) {}
+
+  @override
+  void performPrivateCommand(String action, Map<String, dynamic> data) {
+    // TODO: implement performPrivateCommand
+  }
 }
